@@ -4,6 +4,7 @@ import type { ExecutionContext, TestFn } from 'ava';
 import ava from 'ava';
 import { z } from 'zod';
 
+import { ConfigModule } from '../base/config';
 import { ServerFeature, ServerService } from '../core';
 import { AuthService } from '../core/auth';
 import { QuotaModule } from '../core/quota';
@@ -13,6 +14,7 @@ import { prompts, PromptService } from '../plugins/copilot/prompt';
 import {
   CopilotProviderFactory,
   CopilotProviderType,
+  ModelOutputType,
   StreamObject,
   StreamObjectSchema,
 } from '../plugins/copilot/providers';
@@ -61,6 +63,70 @@ const runIfCopilotConfigured = test.macro(
     }
   }
 );
+
+test('qwen provider requires api key to configure', async t => {
+  const module = await createTestingModule({
+    imports: [
+      ConfigModule.override({
+        copilot: {
+          providers: {
+            qwen: { apiKey: '' },
+          },
+        },
+      }),
+      CopilotModule,
+    ],
+  });
+
+  try {
+    const factory = module.get(CopilotProviderFactory);
+    const provider = await factory.getProviderByModel('qwen-plus');
+    t.is(provider, null);
+  } finally {
+    await module.close();
+  }
+});
+
+test('qwen provider matches configured models', async t => {
+  const module = await createTestingModule({
+    imports: [
+      ConfigModule.override({
+        copilot: {
+          providers: {
+            qwen: {
+              apiKey: 'test-key',
+              baseURL: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
+              version: 'v1',
+            },
+          },
+        },
+      }),
+      CopilotModule,
+    ],
+  });
+
+  try {
+    const factory = module.get(CopilotProviderFactory);
+    const provider = await factory.getProviderByModel('qwen-plus');
+    t.truthy(provider);
+    t.is(provider?.type, CopilotProviderType.Qwen);
+    t.true(await provider!.match({ outputType: ModelOutputType.Text }));
+    t.true(
+      await provider!.match({
+        modelId: 'text-embedding-v4',
+        outputType: ModelOutputType.Embedding,
+      })
+    );
+    t.true(
+      await provider!.match({
+        modelId: 'wanx-v1',
+        outputType: ModelOutputType.Image,
+      })
+    );
+  } finally {
+    await module.close();
+  }
+});
 
 test.serial.before(async t => {
   const module = await createTestingModule({
