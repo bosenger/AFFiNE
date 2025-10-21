@@ -183,13 +183,13 @@ test.serial.before(async t => {
       value: {
         enabled: true,
         scenarios: {
-          image: 'flux-1/schnell',
-          rerank: 'gpt-5-mini',
-          complex_text_generation: 'gpt-5-mini',
-          coding: 'gpt-5-mini',
-          quick_decision_making: 'gpt-5-mini',
-          quick_text_generation: 'gpt-5-mini',
-          polish_and_summarize: 'gemini-2.5-flash',
+          image: 'wanx-v1',
+          rerank: 'qwen-plus',
+          complex_text_generation: 'qwen-plus',
+          coding: 'qwen-plus',
+          quick_decision_making: 'qwen-plus',
+          quick_text_generation: 'qwen-plus',
+          polish_and_summarize: 'qwen-plus',
         },
       },
     },
@@ -532,7 +532,7 @@ The term **“CRDT”** was first introduced by Marc Shapiro, Nuno Preguiça, Ca
       });
     },
     type: 'structured' as const,
-    prefer: CopilotProviderType.Gemini,
+    prefer: CopilotProviderType.Qwen,
   },
   {
     name: 'Should transcribe middle audio',
@@ -572,14 +572,14 @@ The term **“CRDT”** was first introduced by Marc Shapiro, Nuno Preguiça, Ca
         },
       },
     ],
-    config: { model: 'gemini-2.5-pro' },
+    config: { model: 'qwen-max' },
     verifier: (t: ExecutionContext<Tester>, result: string) => {
       t.notThrows(() => {
         TranscriptionResponseSchema.parse(JSON.parse(result));
       });
     },
     type: 'structured' as const,
-    prefer: CopilotProviderType.Gemini,
+    prefer: CopilotProviderType.Qwen,
   },
   {
     promptName: ['Conversation Summary'],

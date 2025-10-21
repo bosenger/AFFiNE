@@ -58,9 +58,9 @@ const createTestPrompts = async (
   copilotSession: CopilotSessionModel,
   db: PrismaClient
 ) => {
-  await copilotSession.createPrompt(TEST_PROMPTS.NORMAL, 'gpt-5-mini');
+  await copilotSession.createPrompt(TEST_PROMPTS.NORMAL, 'qwen-plus');
   await db.aiPrompt.create({
-    data: { name: TEST_PROMPTS.ACTION, model: 'gpt-5-mini', action: 'edit' },
+    data: { name: TEST_PROMPTS.ACTION, model: 'qwen-plus', action: 'edit' },
   });
 };
 
@@ -116,7 +116,7 @@ const addMessagesToSession = async (
   await copilotSession.updateMessages({
     sessionId,
     userId: user.id,
-    prompt: { model: 'gpt-5-mini' },
+    prompt: { model: 'qwen-plus' },
     messages: [
       {
         role: 'user',
@@ -807,7 +807,7 @@ test('should handle fork and session attachment operations', async t => {
       pinned: forkConfig.pinned,
       title: null,
       parentSessionId,
-      prompt: { name: TEST_PROMPTS.NORMAL, action: null, model: 'gpt-5-mini' },
+      prompt: { name: TEST_PROMPTS.NORMAL, action: null, model: 'qwen-plus' },
       messages: [
         {
           role: 'user',
