@@ -40,7 +40,7 @@ export class MockCopilotProvider extends OpenAIProvider {
       ],
     },
     {
-      id: 'gpt-4o',
+      id: 'qwen-plus',
       capabilities: [
         {
           input: [ModelInputType.Text, ModelInputType.Image],
@@ -49,7 +49,7 @@ export class MockCopilotProvider extends OpenAIProvider {
       ],
     },
     {
-      id: 'gpt-4o-2024-08-06',
+      id: 'qwen-max',
       capabilities: [
         {
           input: [ModelInputType.Text, ModelInputType.Image],
@@ -58,7 +58,7 @@ export class MockCopilotProvider extends OpenAIProvider {
       ],
     },
     {
-      id: 'gpt-4.1-2025-04-14',
+      id: 'qwq-32b-preview',
       capabilities: [
         {
           input: [ModelInputType.Text, ModelInputType.Image],
@@ -67,69 +67,39 @@ export class MockCopilotProvider extends OpenAIProvider {
       ],
     },
     {
-      id: 'gpt-5',
+      id: 'qwen-coder-plus',
       capabilities: [
         {
-          input: [ModelInputType.Text, ModelInputType.Image],
-          output: [ModelOutputType.Text, ModelOutputType.Object],
+          input: [ModelInputType.Text],
+          output: [ModelOutputType.Text, ModelOutputType.Structured],
         },
       ],
     },
     {
-      id: 'gpt-5-2025-08-07',
+      id: 'qwen-vl-plus',
       capabilities: [
         {
           input: [ModelInputType.Text, ModelInputType.Image],
-          output: [ModelOutputType.Text, ModelOutputType.Object],
+          output: [ModelOutputType.Text],
         },
       ],
     },
     {
-      id: 'gpt-5-mini',
+      id: 'text-embedding-v4',
       capabilities: [
         {
-          input: [ModelInputType.Text, ModelInputType.Image],
-          output: [
-            ModelOutputType.Text,
-            ModelOutputType.Object,
-            ModelOutputType.Structured,
-          ],
+          input: [ModelInputType.Text],
+          output: [ModelOutputType.Embedding],
         },
       ],
     },
     {
-      id: 'gpt-image-1',
+      id: 'wanx-v1',
       capabilities: [
         {
           input: [ModelInputType.Text, ModelInputType.Image],
           output: [ModelOutputType.Image],
           defaultForOutputType: true,
-        },
-      ],
-    },
-    {
-      id: 'gemini-2.5-flash',
-      capabilities: [
-        {
-          input: [ModelInputType.Text, ModelInputType.Image],
-          output: [
-            ModelOutputType.Text,
-            ModelOutputType.Object,
-            ModelOutputType.Structured,
-          ],
-        },
-      ],
-    },
-    {
-      id: 'gemini-2.5-pro',
-      capabilities: [
-        {
-          input: [ModelInputType.Text, ModelInputType.Image],
-          output: [
-            ModelOutputType.Text,
-            ModelOutputType.Object,
-            ModelOutputType.Structured,
-          ],
         },
       ],
     },

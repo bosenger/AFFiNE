@@ -13,6 +13,7 @@ import { GeminiGenerativeConfig, GeminiVertexConfig } from './providers/gemini';
 import { MorphConfig } from './providers/morph';
 import { OpenAIConfig } from './providers/openai';
 import { PerplexityConfig } from './providers/perplexity';
+import { QwenConfig } from './providers/qwen';
 import { VertexSchema } from './providers/types';
 declare global {
   interface AppConfigSchema {
@@ -28,6 +29,7 @@ declare global {
       scenarios: ConfigItem<CopilotPromptScenario>;
       providers: {
         openai: ConfigItem<OpenAIConfig>;
+        qwen: ConfigItem<QwenConfig>;
         fal: ConfigItem<FalConfig>;
         gemini: ConfigItem<GeminiGenerativeConfig>;
         geminiVertex: ConfigItem<GeminiVertexConfig>;
@@ -50,16 +52,16 @@ defineModuleConfig('copilot', {
     default: {
       override_enabled: false,
       scenarios: {
-        audio_transcribing: 'gemini-2.5-flash',
-        chat: 'gemini-2.5-flash',
-        embedding: 'gemini-embedding-001',
-        image: 'gpt-image-1',
-        rerank: 'gpt-4.1',
-        coding: 'claude-sonnet-4-5@20250929',
-        complex_text_generation: 'gpt-4o-2024-08-06',
-        quick_decision_making: 'gpt-5-mini',
-        quick_text_generation: 'gemini-2.5-flash',
-        polish_and_summarize: 'gemini-2.5-flash',
+        audio_transcribing: 'qwen-plus',
+        chat: 'qwen-plus',
+        embedding: 'text-embedding-v4',
+        image: 'wanx-v1',
+        rerank: 'qwen-plus',
+        coding: 'qwen-coder-plus',
+        complex_text_generation: 'qwen-max',
+        quick_decision_making: 'qwq-32b-preview',
+        quick_text_generation: 'qwen-plus',
+        polish_and_summarize: 'qwen-plus',
       },
     },
   },
@@ -70,6 +72,14 @@ defineModuleConfig('copilot', {
       baseURL: 'https://api.openai.com/v1',
     },
     link: 'https://github.com/openai/openai-node',
+  },
+  'providers.qwen': {
+    desc: 'The config for the qwen provider.',
+    default: {
+      apiKey: '',
+      baseURL: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
+      version: '',
+    },
   },
   'providers.fal': {
     desc: 'The config for the fal provider.',

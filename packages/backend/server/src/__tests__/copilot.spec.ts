@@ -875,7 +875,7 @@ test('should be able to get provider', async t => {
     const p = await factory.getProvider({
       outputType: ModelOutputType.Text,
       inputTypes: [ModelInputType.Text],
-      modelId: 'gpt-4-not-exist',
+      modelId: 'qwen-not-exist',
     });
     t.falsy(p, 'should not get provider');
   }
@@ -2070,16 +2070,12 @@ test('should resolve model correctly based on subscription status and prompt con
   await db.aiPrompt.create({
     data: {
       name: promptName,
-      model: 'gemini-2.5-flash',
+      model: 'qwen-plus',
       messages: {
         create: [{ idx: 0, role: 'system', content: 'test' }],
       },
-      config: { proModels: ['gemini-2.5-pro', 'claude-sonnet-4-5@20250929'] },
-      optionalModels: [
-        'gemini-2.5-flash',
-        'gemini-2.5-pro',
-        'claude-sonnet-4-5@20250929',
-      ],
+      config: { proModels: ['qwen-max', 'qwq-32b-preview'] },
+      optionalModels: ['qwen-plus', 'qwen-max', 'qwq-32b-preview'],
     },
   });
 
@@ -2103,7 +2099,7 @@ test('should resolve model correctly based on subscription status and prompt con
 
   // payment disabled -> allow requested if in optional; pro not blocked
   {
-    const model1 = await s.resolveModel(false, 'gemini-2.5-pro');
+    const model1 = await s.resolveModel(false, 'qwen-max');
     t.snapshot(model1, 'should honor requested pro model');
 
     const model2 = await s.resolveModel(false, 'not-in-optional');
@@ -2113,13 +2109,13 @@ test('should resolve model correctly based on subscription status and prompt con
   // payment enabled + trialing: requesting pro should fallback to default
   {
     mockStatus(SubscriptionStatus.Trialing);
-    const model3 = await s.resolveModel(true, 'gemini-2.5-pro');
+    const model3 = await s.resolveModel(true, 'qwen-max');
     t.snapshot(
       model3,
       'should fallback to default model when requesting pro model during trialing'
     );
 
-    const model4 = await s.resolveModel(true, 'gemini-2.5-flash');
+    const model4 = await s.resolveModel(true, 'qwen-plus');
     t.snapshot(model4, 'should honor requested non-pro model during trialing');
 
     const model5 = await s.resolveModel(true);
@@ -2138,7 +2134,7 @@ test('should resolve model correctly based on subscription status and prompt con
       'should pick default model when no requested model during active'
     );
 
-    const model7 = await s.resolveModel(true, 'claude-sonnet-4-5@20250929');
+    const model7 = await s.resolveModel(true, 'qwq-32b-preview');
     t.snapshot(model7, 'should honor requested pro model during active');
 
     const model8 = await s.resolveModel(true, 'not-in-optional');

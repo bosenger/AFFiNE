@@ -4,6 +4,7 @@ import type { ExecutionContext, TestFn } from 'ava';
 import ava from 'ava';
 import { z } from 'zod';
 
+import { ConfigModule } from '../base/config';
 import { ServerFeature, ServerService } from '../core';
 import { AuthService } from '../core/auth';
 import { QuotaModule } from '../core/quota';
@@ -13,6 +14,7 @@ import { prompts, PromptService } from '../plugins/copilot/prompt';
 import {
   CopilotProviderFactory,
   CopilotProviderType,
+  ModelOutputType,
   StreamObject,
   StreamObjectSchema,
 } from '../plugins/copilot/providers';
@@ -61,6 +63,70 @@ const runIfCopilotConfigured = test.macro(
     }
   }
 );
+
+test('qwen provider requires api key to configure', async t => {
+  const module = await createTestingModule({
+    imports: [
+      ConfigModule.override({
+        copilot: {
+          providers: {
+            qwen: { apiKey: '' },
+          },
+        },
+      }),
+      CopilotModule,
+    ],
+  });
+
+  try {
+    const factory = module.get(CopilotProviderFactory);
+    const provider = await factory.getProviderByModel('qwen-plus');
+    t.is(provider, null);
+  } finally {
+    await module.close();
+  }
+});
+
+test('qwen provider matches configured models', async t => {
+  const module = await createTestingModule({
+    imports: [
+      ConfigModule.override({
+        copilot: {
+          providers: {
+            qwen: {
+              apiKey: 'test-key',
+              baseURL: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
+              version: 'v1',
+            },
+          },
+        },
+      }),
+      CopilotModule,
+    ],
+  });
+
+  try {
+    const factory = module.get(CopilotProviderFactory);
+    const provider = await factory.getProviderByModel('qwen-plus');
+    t.truthy(provider);
+    t.is(provider?.type, CopilotProviderType.Qwen);
+    t.true(await provider!.match({ outputType: ModelOutputType.Text }));
+    t.true(
+      await provider!.match({
+        modelId: 'text-embedding-v4',
+        outputType: ModelOutputType.Embedding,
+      })
+    );
+    t.true(
+      await provider!.match({
+        modelId: 'wanx-v1',
+        outputType: ModelOutputType.Image,
+      })
+    );
+  } finally {
+    await module.close();
+  }
+});
 
 test.serial.before(async t => {
   const module = await createTestingModule({
@@ -117,13 +183,13 @@ test.serial.before(async t => {
       value: {
         enabled: true,
         scenarios: {
-          image: 'flux-1/schnell',
-          rerank: 'gpt-5-mini',
-          complex_text_generation: 'gpt-5-mini',
-          coding: 'gpt-5-mini',
-          quick_decision_making: 'gpt-5-mini',
-          quick_text_generation: 'gpt-5-mini',
-          polish_and_summarize: 'gemini-2.5-flash',
+          image: 'wanx-v1',
+          rerank: 'qwen-plus',
+          complex_text_generation: 'qwen-plus',
+          coding: 'qwen-plus',
+          quick_decision_making: 'qwen-plus',
+          quick_text_generation: 'qwen-plus',
+          polish_and_summarize: 'qwen-plus',
         },
       },
     },
@@ -466,7 +532,7 @@ The term **“CRDT”** was first introduced by Marc Shapiro, Nuno Preguiça, Ca
       });
     },
     type: 'structured' as const,
-    prefer: CopilotProviderType.Gemini,
+    prefer: CopilotProviderType.Qwen,
   },
   {
     name: 'Should transcribe middle audio',
@@ -506,14 +572,14 @@ The term **“CRDT”** was first introduced by Marc Shapiro, Nuno Preguiça, Ca
         },
       },
     ],
-    config: { model: 'gemini-2.5-pro' },
+    config: { model: 'qwen-max' },
     verifier: (t: ExecutionContext<Tester>, result: string) => {
       t.notThrows(() => {
         TranscriptionResponseSchema.parse(JSON.parse(result));
       });
     },
     type: 'structured' as const,
-    prefer: CopilotProviderType.Gemini,
+    prefer: CopilotProviderType.Qwen,
   },
   {
     promptName: ['Conversation Summary'],
