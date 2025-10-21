@@ -13,6 +13,7 @@ import { GeminiGenerativeConfig, GeminiVertexConfig } from './providers/gemini';
 import { MorphConfig } from './providers/morph';
 import { OpenAIConfig } from './providers/openai';
 import { PerplexityConfig } from './providers/perplexity';
+import { QwenConfig } from './providers/qwen';
 import { VertexSchema } from './providers/types';
 declare global {
   interface AppConfigSchema {
@@ -28,6 +29,7 @@ declare global {
       scenarios: ConfigItem<CopilotPromptScenario>;
       providers: {
         openai: ConfigItem<OpenAIConfig>;
+        qwen: ConfigItem<QwenConfig>;
         fal: ConfigItem<FalConfig>;
         gemini: ConfigItem<GeminiGenerativeConfig>;
         geminiVertex: ConfigItem<GeminiVertexConfig>;
@@ -70,6 +72,14 @@ defineModuleConfig('copilot', {
       baseURL: 'https://api.openai.com/v1',
     },
     link: 'https://github.com/openai/openai-node',
+  },
+  'providers.qwen': {
+    desc: 'The config for the qwen provider.',
+    default: {
+      apiKey: '',
+      baseURL: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
+      version: '',
+    },
   },
   'providers.fal': {
     desc: 'The config for the fal provider.',
